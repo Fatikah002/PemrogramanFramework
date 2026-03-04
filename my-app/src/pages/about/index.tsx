@@ -10,6 +10,7 @@ export default function Home() {
   return (
     <div>
       <h1>Praktikum Next.js Pages Router</h1> 
+      <h1>Ini Halaman About</h1> 
       <h3>Nama: Fatikah Salsabilla</h3>
       <h3>NIM: 2341720003</h3>
       <h3>Kelas: 3C - TI</h3>
