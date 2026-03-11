@@ -1,20 +1,21 @@
+import { useRouter } from "next/router";
 import Navbar from "../navbar";
 
-type AppshellProps = {
+const disableNavbar = ["/auth/login", "/auth/register", "/404"];
+
+type AppShellProps = {
   children: React.ReactNode;
 };
 
-const Appshell = (props: AppshellProps) => {
+const AppShell = (props: AppShellProps) => {
   const { children } = props;
+  const { pathname } = useRouter();
   return (
     <main>
-      <Navbar />
+      {!disableNavbar.includes(pathname) && <Navbar />}
       {children}
-      <div>
-        footer
-      </div>
     </main>
   );
 };
 
-export default Appshell;
+export default AppShell;
