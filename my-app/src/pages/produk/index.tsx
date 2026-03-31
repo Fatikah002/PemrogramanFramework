@@ -1,56 +1,55 @@
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+// import { useRouter } from "next/router";
+// // import { useEffect, useState } from "react";
+import TampilanProduk from "../views/produk";
+import useSWR from "swr";
+import fetcher from "../utils/swr/fetcher";
 
 type ProductType = {
-  id        : string;
-  name      : string;
-  price     : number;
-  size      : string;
-  category  : string;
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
 };
 
-const kategori= () => {
-  // const [isLogin, setIsLogin] = useState(false);
-  // const { push } = useRouter();
-  const [products, setProducts] = useState([]);
+const kategori = () => {
+  // // const [isLogin, setIsLogin] = useState(false);
+  // // const { push } = useRouter();
+  // const [products, setProducts] = useState<ProductType[]>([]);
+  // const [isLoading, setIsLoading] = useState(true);
+  // // console.log("products:", products);
 
+  // // useEffect(() => {
+  // //   if (isLogin) {
+  // //     push("/auth/login");
+  // //   }
+  // // }, []);
+
+  const { data, isLoading } = useSWR<{ data: ProductType[] }>(
+    "/api/produk",
+    fetcher
+  );
+  const products = data?.data || [];
+  // cek apakah data, error, dan isLoading sudah benar
   // useEffect(() => {
-  //   if (!isLogin) {
-  //     push("/auth/login");
-  //   }
+  //   setIsLoading(true);
+  //   fetch("/api/produk")
+  //     .then((response) => response.json())
+  //     .then((responsedata) => {
+  //       setProducts(responsedata.data);
+  //       // console.log("Data produk:", responsedata.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching produk:", error);
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
   // }, []);
-
-const fetchProducts = () => {
-    fetch("/api/produk")
-      .then((response) => response.json())
-      .then((responseData) => {
-        // console.log("Data produk:", responseData.data);
-        setProducts(responseData.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching produk:", error);
-      });
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
   return (
     <div>
-      <h1>Daftar Produk</h1>
-      <button type="button" onClick={fetchProducts} >
-      Refresh Data
-      </button>
-      {products.map((products:ProductType) => (
-        <div key={products.id}>
-          <h2>{products.name}</h2>
-          <p>Harga: {products.price}</p>
-          <p>Ukuran: {products.size}</p>
-          <p>Kategori: {products.category}</p>  
-        </div>
-      ))} 
-      
+      <TampilanProduk products={products} isLoading={isLoading} />
     </div>
   );
 };
