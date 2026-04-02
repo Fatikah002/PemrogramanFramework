@@ -1,4 +1,5 @@
-import styles from "../../../../views/produk/sections/HeroSection.module.scss";
+import styles from "./HeroSection.module.scss";
+
 
 const HeroSection = () => {
   return (

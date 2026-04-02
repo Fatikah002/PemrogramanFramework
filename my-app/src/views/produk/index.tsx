@@ -1,4 +1,4 @@
-import styles from "../../produk/product.module.scss";
+import styles from "../../pages/produk/product.module.scss";
 
 type ProductType = {
   id: string;
@@ -15,7 +15,7 @@ const TampilanProduk = ({
   products?: ProductType[];
   isLoading?: boolean;
 }) => {
-  const skeletonItems = [1, 2, 3, 4];
+  const skeletonItems = [1, 2, 3, 4, 5];
   const resolvedIsLoading = isLoading ?? products === undefined;
   const safeProducts = products ?? [];
 

@@ -1,8 +1,17 @@
 // import { useRouter } from "next/router";
 // // import { useEffect, useState } from "react";
-import TampilanProduk from "../views/produk";
+import TampilanProduk from "../../views/produk";
+import HeroSection from "../../views/produk/sections/HeroSection";
 import useSWR from "swr";
-import fetcher from "../utils/swr/fetcher";
+import fetcher from "../../utils/swr/fetcher";
+
+const SKELETON_DELAY_MS = 1200;
+
+const delayedFetcher = async (url: string) => {
+  const data = await fetcher(url);
+  await new Promise((resolve) => setTimeout(resolve, SKELETON_DELAY_MS));
+  return data;
+};
 
 type ProductType = {
   id: string;
@@ -25,11 +34,11 @@ const kategori = () => {
   // //   }
   // // }, []);
 
-  const { data, isLoading } = useSWR<{ data: ProductType[] }>(
+  const { data, isLoading, isValidating } = useSWR<{ data: ProductType[] }>(
     "/api/produk",
-    fetcher
+    delayedFetcher
   );
-  const products = data?.data || [];
+  const products = data?.data;
   // cek apakah data, error, dan isLoading sudah benar
   // useEffect(() => {
   //   setIsLoading(true);
@@ -49,7 +58,11 @@ const kategori = () => {
 
   return (
     <div>
-      <TampilanProduk products={products} isLoading={isLoading} />
+      <HeroSection />
+      <TampilanProduk
+        products={products}
+        isLoading={isLoading || isValidating}
+      />
     </div>
   );
 };
