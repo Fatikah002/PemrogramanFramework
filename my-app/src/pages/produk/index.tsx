@@ -5,14 +5,6 @@ import HeroSection from "../../views/produk/sections/HeroSection";
 import useSWR from "swr";
 import fetcher from "../../utils/swr/fetcher";
 
-const SKELETON_DELAY_MS = 1200;
-
-const delayedFetcher = async (url: string) => {
-  const data = await fetcher(url);
-  await new Promise((resolve) => setTimeout(resolve, SKELETON_DELAY_MS));
-  return data;
-};
-
 type ProductType = {
   id: string;
   name: string;
@@ -36,7 +28,7 @@ const kategori = () => {
 
   const { data, isLoading, isValidating } = useSWR<{ data: ProductType[] }>(
     "/api/produk",
-    delayedFetcher
+    fetcher
   );
   const products = data?.data;
   // cek apakah data, error, dan isLoading sudah benar

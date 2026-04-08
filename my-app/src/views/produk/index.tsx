@@ -1,4 +1,6 @@
+import { link } from "node:fs";
 import styles from "../../pages/produk/product.module.scss";
+import Link from "next/link";
 
 type ProductType = {
   id: string;
@@ -39,7 +41,8 @@ const TampilanProduk = ({
         ) : safeProducts.length > 0 ? (
           <>
             {safeProducts.map((products: ProductType) => (
-              <div key={products.id} className={styles.produk__content__item}>
+              <Link href={`/produk/${products.id}`} key={products.id} className={styles.produk__content__item}>
+              {/* <div key={products.id} className={styles.produk__content__item}> */}
                 <div className={styles.produk__content__item__image}>
                   <img src={products.image} alt={products.name} width={200} />
                 </div>
@@ -52,7 +55,8 @@ const TampilanProduk = ({
                 <p className={styles.produk__content__item__price}>
                   Rp {products.price.toLocaleString("id-ID")}
                 </p>
-              </div>
+              {/* </div> */}
+              </Link>
             ))}
           </>
         ) : (
