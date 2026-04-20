@@ -1,22 +1,15 @@
-// import { useRouter } from "next/router";
-// // import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import TampilanProduk from "../../views/produk";
 import HeroSection from "../../views/produk/sections/HeroSection";
 import useSWR from "swr";
 import fetcher from "../../utils/swr/fetcher";
-
-type ProductType = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  category: string;
-};
+import { ProductType } from "../../types/Product.type";
 
 const kategori = () => {
   // // const [isLogin, setIsLogin] = useState(false);
-  // // const { push } = useRouter();
-  // const [products, setProducts] = useState<ProductType[]>([]);
+  const { push } = useRouter();
+  const [products, setProducts] = useState<ProductType[]>([]);
   // const [isLoading, setIsLoading] = useState(true);
   // // console.log("products:", products);
 
@@ -26,11 +19,8 @@ const kategori = () => {
   // //   }
   // // }, []);
 
-  const { data, isLoading, isValidating } = useSWR<{ data: ProductType[] }>(
-    "/api/produk",
-    fetcher
-  );
-  const products = data?.data;
+  const { data, isLoading } = useSWR("/api/produk", fetcher);
+  // const products = data?.data;
   // cek apakah data, error, dan isLoading sudah benar
   // useEffect(() => {
   //   setIsLoading(true);
@@ -51,10 +41,7 @@ const kategori = () => {
   return (
     <div>
       <HeroSection />
-      <TampilanProduk
-        products={products}
-        isLoading={isLoading || isValidating}
-      />
+      <TampilanProduk products={isLoading ? [] : data.data} />
     </div>
   );
 };
