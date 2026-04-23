@@ -53,6 +53,7 @@ const TampilanRegister = () => {
     const email = ((formData.get("email") as string) || "").trim();
     const fullname = formData.get("Fullname") as string;
     const password = (formData.get("Password") as string) || "";
+    const role = ((formData.get("role") as string) || "member").trim();
 
     if (!email) {
       setIsLoading(false);
@@ -66,13 +67,19 @@ const TampilanRegister = () => {
       return;
     }
 
+    if (!["member", "admin", "editor"].includes(role)) {
+      setIsLoading(false);
+      setError("Role tidak valid");
+      return;
+    }
+
     try {
       const response = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, fullname, password }),
+        body: JSON.stringify({ email, fullname, password, role }),
       });
 
       const result = await response.json();
@@ -151,6 +158,25 @@ const TampilanRegister = () => {
               onInput={resetValidationMessage}
               className={style.register__form__item__input}
             />
+          </div>
+
+          <div className={style.register__form__item}>
+            <label
+              htmlFor="role"
+              className={style.register__form__item__label}
+            >
+              Role
+            </label>
+            <select
+              id="role"
+              name="role"
+              defaultValue="member"
+              className={style.register__form__item__input}
+            >
+              <option value="member">Member</option>
+              <option value="admin">Admin</option>
+              <option value="editor">Editor</option>
+            </select>
           </div>
 
           <button

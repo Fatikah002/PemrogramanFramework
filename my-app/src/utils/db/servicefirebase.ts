@@ -2,17 +2,40 @@ import {
     getFirestore,
     collection,
     getDocs,
-    Firestore,
     getDoc,
     doc,
     query,
     addDoc,
     where,
+    updateDoc
 } from "firebase/firestore";
 import app from "./firebase";
 import bcrypt from "bcrypt";
 
 const db = getFirestore(app);
+
+type OAuthUserData = {
+    fullname: string;
+    email: string;
+    image?: string;
+    type?: string;
+    role?: string;
+};
+
+type ServiceResult = {
+    status: boolean;
+    message: string;
+    data?: OAuthUserData;
+};
+
+async function getUserByEmail(email: string) {
+    const q = query(collection(db, "users"), where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+}
 
 export async function retrieveProducts(collectionName: string) {
     const snapshot = await getDocs(collection(db, collectionName));
@@ -29,6 +52,15 @@ export async function retrieveDataByID(collectionName: string, id: string) {
     return data;
 }
 
+export async function signIn(email: string) {
+    const data = await getUserByEmail(email);
+    if (data) {
+        return data[0];
+    } else {
+        return null;
+    }
+}
+
 export async function signUp(
     userData: {
         email: string;
@@ -38,15 +70,7 @@ export async function signUp(
     },
 ) {
     try {
-        const q = query(
-            collection(db, "users"),
-            where("email", "==", userData.email),
-        );
-        const querySnapshot = await getDocs(q);
-        const data = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
+        const data = await getUserByEmail(userData.email);
 
         if (data.length > 0) {
             return {
@@ -60,7 +84,7 @@ export async function signUp(
             email: userData.email,
             fullname: userData.fullname,
             password: hashedPassword,
-            role: "member",
+            role: userData.role || "member",
             createdAt: new Date().toISOString(),
         });
 
@@ -74,4 +98,48 @@ export async function signUp(
             message: error?.message || "Internal server error",
         };
     }
+}
+
+export async function signInWithOAuth(
+    userData: OAuthUserData,
+    providerName: string = "OAuth",
+): Promise<ServiceResult> {
+    try {
+        const data: any = await getUserByEmail(userData.email);
+
+        if (data.length > 0) {
+            const mergedUserData = {
+                ...userData,
+                role: data[0].role,
+            };
+
+            await updateDoc(doc(db, "users", data[0].id), mergedUserData);
+            return {
+                status: true,
+                message: `User registered and logged in with ${providerName}`,
+                data: mergedUserData,
+            };
+        }
+
+        const newUserData = {
+            ...userData,
+            role: "member",
+        };
+        await addDoc(collection(db, "users"), newUserData);
+        return {
+            status: true,
+            message: `User registered and logged in with ${providerName}`,
+            data: newUserData,
+        };
+    } catch (error: any) {
+        return {
+            status: false,
+            message: `Failed to register user with ${providerName}`,
+        };
+    }
+}
+
+export async function signInWithGoogle(userData: any, callback: any) {
+    const result = await signInWithOAuth(userData, "Google");
+    callback(result);
 }

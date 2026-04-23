@@ -18,9 +18,10 @@ export default async function handler(
         });
     }
 
-    const { email, fullname, password } = req.body;
+    const { email, fullname, password, role } = req.body;
     const normalizedEmail = typeof email === "string" ? email.trim() : "";
     const normalizedPassword = typeof password === "string" ? password : "";
+    const normalizedRole = typeof role === "string" ? role.trim().toLowerCase() : "member";
 
     if (!normalizedEmail) {
         return res.status(400).json({
@@ -43,10 +44,18 @@ export default async function handler(
         });
     }
 
+    if (!["admin", "member", "editor"].includes(normalizedRole)) {
+        return res.status(400).json({
+            status: "error",
+            message: "Role tidak valid",
+        });
+    }
+
     const result = await signUp({
         email: normalizedEmail,
         fullname,
         password: normalizedPassword,
+        role: normalizedRole,
     });
 
     if (result.status === "success") {
