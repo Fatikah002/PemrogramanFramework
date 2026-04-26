@@ -18,6 +18,10 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "types": [
+      "jest",
+      "node"
+    ],
     "paths": {
       "@/*": [
         "./src/*"
@@ -27,8 +31,9 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "src/pages/shop/[[...slug]].js"  ],
+    "**/*.tsx",
+    "src/pages/shop/[[...slug]].js"
+  ],
   "exclude": [
     "node_modules"
   ]

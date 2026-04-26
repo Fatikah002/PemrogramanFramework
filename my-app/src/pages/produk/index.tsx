@@ -1,10 +1,12 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import TampilanProduk from "../../views/produk";
-import HeroSection from "../../views/produk/sections/HeroSection";
 import useSWR from "swr";
 import fetcher from "../../utils/swr/fetcher";
 import { ProductType } from "../../types/Product.type";
+import dynamic from "next/dynamic";
+
+const HeroSection = dynamic(() => import("../../views/produk/sections/HeroSection"));
 
 const kategori = () => {
   // // const [isLogin, setIsLogin] = useState(false);
@@ -41,7 +43,8 @@ const kategori = () => {
   return (
     <div>
       <HeroSection />
-      <TampilanProduk products={isLoading ? [] : data.data} />
+      {/* <TampilanProduk products={isLoading ? [] : data.data} /> */}
+      <TampilanProduk products={isLoading ? [] : data?.data} />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { link } from "node:fs";
 import styles from "../../pages/produk/product.module.scss";
 import Link from "next/link";
+import Image from "next/image";
 
 type ProductType = {
   id: string;
@@ -23,7 +24,7 @@ const TampilanProduk = ({
 
   return (
     <div className={styles.produk}>
-      <h1 className={styles.produk__title}>Daftar Produk</h1>
+      <h1 data-testid="title" className={styles.produk__title}>Daftar Produk</h1>
       <div className={styles.produk__content}>
         {resolvedIsLoading ? (
           <>
@@ -38,13 +39,13 @@ const TampilanProduk = ({
               </div>
             ))}
           </>
-        ) : safeProducts.length > 0 ? (
+        ) : safeProducts?.length > 0 ? (
           <>
-            {safeProducts.map((products: ProductType) => (
+            {safeProducts?.map((products: ProductType) => (
               <Link href={`/produk/${products.id}`} key={products.id} className={styles.produk__content__item}>
               {/* <div key={products.id} className={styles.produk__content__item}> */}
                 <div className={styles.produk__content__item__image}>
-                  <img src={products.image} alt={products.name} width={200} />
+                  <Image src={products.image} alt={products.name} width={200} height={200} />
                 </div>
                 <h4 className={styles.produk__content__item__name}>
                   {products.name}
